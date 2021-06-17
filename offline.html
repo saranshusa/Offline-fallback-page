@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Custom Offline Page</title>
+
+    <!-- Inline the page's stylesheet. -->
+    <style>
+      body {
+        background: rgb(209, 255, 249);
+        background: radial-gradient(
+          circle,
+          rgba(209, 255, 249, 1) 0%,
+          rgba(155, 255, 224, 1) 50%,
+          rgba(118, 229, 255, 1) 100%
+        );
+        font-family: helvetica, arial, sans-serif;
+        margin: 20px;
+        align-items: center;
+        justify-content: center;
+        margin-top: 15%;
+      }
+
+      h1 {
+        display: block;
+        text-align: center;
+        font-style: italic;
+        color: #169176;
+      }
+
+      p {
+        font-size: larger;
+        font-weight: normal;
+        text-align: center;
+        margin-block: 3rem;
+      }
+
+      button {
+        font-size: 20px;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-weight: bolder;
+        text-align: center;
+        position: relative;
+        align-content: center;
+        justify-content: center;
+        margin: auto;
+        background: chocolate;
+        width: 125px;
+        height: 50px;
+        border: none;
+        border-radius: 12px;
+        display: block;
+        padding: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>You are offline</h1>
+
+    <p>
+      The page will automatically reload once the connection is re-established.
+      Click the button below to try reloading manually.
+    </p>
+    <button type="button">⤾ Reload</button>
+
+    <!-- Inline the page's JavaScript file. -->
+    <script>
+      document.querySelector("button").addEventListener("click", () => {
+        window.location.reload();
+      });
+
+      // Listen to changes in the network state, reload when online.
+      // This handles the case when the device is completely offline.
+      window.addEventListener("online", () => {
+        window.location.reload();
+      });
+
+      // Check if the server is responding & reload the page if it is.
+      // This handles the case when the device is online, but the server
+      // is offline or misbehaving.
+      async function checkNetworkAndReload() {
+        try {
+          const response = await fetch(".");
+          // Verify we get a valid response from the server
+          if (response.status >= 200 && response.status < 500) {
+            window.location.reload();
+            return;
+          }
+        } catch {
+          // Unable to connect to the server, ignore.
+        }
+        window.setTimeout(checkNetworkAndReload, 2500);
+      }
+
+      checkNetworkAndReload();
+    </script>
+  </body>
+</html>
